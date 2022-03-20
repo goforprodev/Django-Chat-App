@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title> 
+    <link rel="stylesheet" href="{% static 'style.css'%}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <div class="app">
+        <h2>{{room.capitalize}}</h2>
+        <div class="message-box" id="display">
+            <!-- <div class="message">
+                <p class="user"><b>{{username.capitalize}}</b></p>
+                <p class="text"> Some message</p>
+                <p class="time">12.40pm</p>
+            </div> -->
+        </div>
+        <script>    
+            $(document).ready(function(){
+                setInterval(function(){
+                    $.ajax({
+                        type:'GET',
+                        url:"/getMessages/{{room}}/",
+                        success:function(response){
+                            $('#display').empty();
+                            for(var key in response.messages){
+                                var temp = `<div class="message">
+                                    <p class="user"><b>${response.messages[key].user}</b></p>
+                                    <p class="text">${response.messages[key].value}</p>
+                                    <p class="time">${response.messages[key].date}</p>
+                                </div>`
+                                $('#display').append(temp)
+                            }
+                        },
+                        error:function(){
+                            alert("sorry an error occured")
+                        }
+                    })
+                },1000)
+            })
+        </script>
+        <form id="post-form">
+            {% csrf_token %}
+            <input type="hidden" name="username" id="username" value="{{username}}">
+            <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}">
+            <input type="text" name="message" id="message">
+            <br><br>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+
+    <script type="text/javascript">
+      
+        $(document).on('submit','#post-form',function(e){
+            e.preventDefault()
+
+            $.ajax({
+                type:'POST',
+                url:'/send',
+                data:{
+                    username:$('#username').val(),
+                    room_id:$('#room_id').val(),
+                    message:$('#message').val(),
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                success:function(data){
+                    
+                }
+            });
+            document.getElementById('message').value = ""
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'style.css'%}">
+</head>
+<body>
+    <div class="app">
+        <h1>Welcome to my django chat app</h1>
+
+        <form action="checkview" method="POST">
+            {% csrf_token %}
+            <p>Room: </p>
+            <input type="text" name="room_name" id="">
+            <br>
+            <p>Username: </p>
+            <input type="text" name="username">
+            <br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
